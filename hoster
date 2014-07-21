@@ -1,0 +1,81 @@
+#!/usr/bin/env node
+
+var 
+  express = require('express')
+  http = require('http') 
+  path = require('path')
+  fs = require('fs')
+  configs = process.argv.slice(2)
+  usage = "Usage: hoster [<mount-point>:]<server.js> [[<mount-point>:]<server.js> ...]\n  Where <server.js> must conform to the hoster protocol"
+  
+if (!configs.length) {
+  console.log(usage);
+  process.exit(1);
+}
+
+console.log('* Working directory:', process.cwd());
+
+/**
+  Attach services to the current app
+
+  @param services  [ {mount: <mnt-point>, handler: Function (app)}]
+    ex: app.attach([{ mount: '/blog', handler:require('./blog.js') }, { handler: require('middleware1.js') }]);
+*/
+
+function attach(services) {
+  var self = this;
+  services.forEach(function (service) {
+    
+    if (service.mount) { // Middleware handler
+      var mountApp = newApp();
+      mountApp.set('parent', self);
+      
+      var configurator = self.get('configurator');
+      if (configurator) configurator(service.mount, mountApp);
+      
+      service.handler(mountApp);
+      
+      if (service.mount.length) {
+        mountApp.set('base', service.mount);
+        console.log('* Mounting', service.handler.name || "(no-name)", 'middleware at', service.mount);
+        self.use(service.mount, mountApp);
+      } else {
+        console.log('* Adding', service.handler.name || "(no-name)", 'middleware');
+        self.use(mountApp);
+      }
+    } else { // Configuring handler
+      console.log('* Loading', service.handler.name || "(no-name)", 'service');
+      service.handler(self);
+    }
+  });  
+}
+
+// Default app settings
+function newApp() {
+  var app = express()
+  app.set('port', process.env.PORT || 3000);
+  app.set('root', path.resolve(process.cwd()));
+  app.set('base', '');
+  app.set('parent', null);
+  app.set('views', app.get('root') + '/views');
+  app.set('configurator', function (mountPoint, app) { }); // Middeware configurator default: noop
+  
+  app.attach = attach;
+  return app;
+}
+
+// Load services
+var services = configs.map(function (config) {
+  var match = config.match(/^(.*):(.+)$/);
+  return match ?{ mount: match[1], handler: require(path.resolve(match[2])) } : { handler: require(path.resolve(config)) };
+});
+
+// Create base app
+var app = newApp();
+app.attach(services);
+
+// Start server
+var server = http.createServer(app);
+server.listen(app.get('port'), function(){
+  console.log("* Server is listening on port", app.get('port'));
+});

@@ -1,0 +1,12 @@
+{
+  "name": "hoster",
+  "version": "0.1.0",
+  "description": "hoster is an express hosting rack",
+  "main": "hoster",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin":{"hoster":"hoster"},
+  "author": "Thierry Passeron",
+  "license": "MIT"
+}
