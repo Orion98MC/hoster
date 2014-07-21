@@ -44,6 +44,7 @@ hoster defines no routes and doesn't attach any express/connect middleware.
 
 ## Hoster protocol
 
+Hoster creates one express app and attach services to it.
 Hoster requires that services export a single function taking an express app as argument:
 
 ```js
@@ -56,7 +57,7 @@ module.exports = function (app) {
 };
 ```
 
-When a service has no mount point in the hoster command line, the current app is passed as argument. This kind of service can add routes, or do anything to the global express app. 
+When a service has no mount point in the hoster command line, the current app is passed as argument. This kind of service can add routes, or do anything to the global express app automatically created by hoster. 
 
 When a service requires to be mounted at a specific mount-point, a new express app is created and passed as argument. This kind of service is decoupled from the hosting context. (i.e. app.use(mount-point, service)) 
 If the mount-point is empty (ex: hoster :./service.js) then the service is a added as a middleware with no path (i.e. app.use(service))
