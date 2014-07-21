@@ -10,7 +10,7 @@ Hoster requires express node packet to be installed as global (ex: npm i -g expr
 ## Install
 
 ```sh
-$ npm install -g hoster
+$ npm install -g express_hoster
 ```
 
 Be sure to have /usr/local/bin in your PATH
