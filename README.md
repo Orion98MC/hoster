@@ -22,8 +22,8 @@ Be sure to have /usr/local/bin in your PATH
 $ hoster  [<mnt-point>:]<service.js> [[<mnt-point>:]<service.js> ...]
 ```  
 
-* At least one <service.js> must be provided
-* each <service.js> must conform to the hoster protocol
+* At least one service must be provided
+* each service must conform to the hoster protocol
     
 Example:
 
@@ -32,7 +32,7 @@ $ hoster ./db-config.js :../stats/stats.js ./server.js /blog:../blog/blog.js
 
 ```
 
-default port is 3000, but you can change it by prepending PORT=<port-number> environment variable:
+default port is 3000, but you can change it by prepending PORT=port-number environment variable:
 
 ```sh
 $ PORT=8080 hoster ./db-config.js :../stats/stats.js ./server.js /blog:../blog/blog.js
@@ -58,7 +58,7 @@ module.exports = function (app) {
 
 When a service has no mount point in the hoster command line, the current app is passed as argument. This kind of service can add routes, or do anything to the global express app. 
 
-When a service requires to be mounted at a specific mount-point, a new express app is created and passed as argument. This kind of service is decoupled from the hosting context. (i.e. app.use(<mount-point>, service)) 
+When a service requires to be mounted at a specific mount-point, a new express app is created and passed as argument. This kind of service is decoupled from the hosting context. (i.e. app.use(mount-point, service)) 
 If the mount-point is empty (ex: hoster :./service.js) then the service is a added as a middleware with no path (i.e. app.use(service))
 
 Services inherit their parent's 'root' (cwd) and 'views' settings accessible via app.get(). They can also access their mount-point via app.get('base'). 
