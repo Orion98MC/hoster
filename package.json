@@ -1,5 +1,5 @@
 {
-  "name": "hoster",
+  "name": "express_hoster",
   "version": "0.1.0",
   "description": "hoster is an express hosting rack",
   "main": "hoster",
