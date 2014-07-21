@@ -48,7 +48,7 @@ Hoster creates one express app and attach services to it.
 Hoster requires that services export a single function taking an express app as argument:
 
 ```js
-module.exports = function (app) {
+module.exports = function myService1(app) {
 
   /*
     configure the app...
