@@ -43,7 +43,7 @@ hoster defines no routes and doesn't attach any express/connect middleware.
 
 ## Features
 
-Sometimes it's useful to load a feature inside a service. But have them attached when you decide to.
+Sometimes it's useful to load a *feature* inside a service. But have it attached when you decide to.
 
 So you load features juste like any other service but with a + (plus) sign in front of their mount point like this:
 
@@ -58,6 +58,8 @@ Later in any service you can include it with the following code:
 ```js
 app.features('/login');
 ```
+
+This will call the login.js handler and pass it the app as argument just like with mounted services.
 
 
 ## Hoster protocol
