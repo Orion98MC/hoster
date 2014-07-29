@@ -1,6 +1,6 @@
 {
   "name": "express_hoster",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "hoster is an express hosting rack",
   "main": "hoster",
   "scripts": {

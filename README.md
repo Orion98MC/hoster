@@ -19,7 +19,7 @@ Be sure to have /usr/local/bin in your PATH
 ## Usage
 
 ```sh
-$ hoster  [<mnt-point>:]<service.js> [[<mnt-point>:]<service.js> ...]
+$ hoster  [[+]<mnt-point>:]<service.js> [[[+]<mnt-point>:]<service.js> ...]
 ```  
 
 * At least one service must be provided
@@ -43,17 +43,20 @@ hoster defines no routes and doesn't attach any express/connect middleware.
 
 ## Features
 
-Somethimes it's useful to load a feature inside a service
+Sometimes it's useful to load a feature inside a service. But have them attached when you decide to.
+
+So you load features juste like any other service but with a + (plus) sign in front of their mount point like this:
 
 ```sh
--f /login:login.js
++/login:login.js
 ```
+
 This will require the login.js and save it as a feature named '/login'
 
-Later in any app you can include it with the following code:
+Later in any service you can include it with the following code:
 
 ```js
-if (app.features) app.features('/login');
+app.features('/login');
 ```
 
 
