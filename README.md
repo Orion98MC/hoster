@@ -41,6 +41,21 @@ $ PORT=8080 hoster ./db-config.js :../stats/stats.js ./server.js /blog:../blog/b
 
 hoster defines no routes and doesn't attach any express/connect middleware.
 
+## Features
+
+Somethimes it's useful to load a feature inside a service
+
+```sh
+-f /login:login.js
+```
+This will require the login.js and save it as a feature named '/login'
+
+Later in any app you can include it with the following code:
+
+```js
+if (app.features) app.features('/login');
+```
+
 
 ## Hoster protocol
 
