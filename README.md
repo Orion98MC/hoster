@@ -50,11 +50,65 @@ Services are loaded in the command line order.
 Based on how you instruct hoster to load them (in the command line), different results can be obtained.
 
 
+## Hoster protocol
+
+Hoster creates one express app and attach services to it.
+
+Hoster requires that services export a single function taking an express app as first argument:
+
+```js
+module.exports = function myService1(app) {
+
+  /*
+    configure the app...
+  */
+
+};
+```
+
+* No mount-point services
+
+When a service has no mount point in the hoster command line (no colon in front of its path), the current app is passed as argument. This kind of service can add routes, or do anything to the global express app automatically created by hoster. 
+
+* Mount-point services
+
+When a service requires to be mounted at a specific mount-point, a new express app is created and passed as argument. This kind of service is decoupled from the hosting context. (i.e. app.use(mount-point, service)) 
+
+Features are special case of mount-point services, their mount point must start with a + (plus) sign (see features below)
+
+* Empty mount-point
+
+If the mount-point is empty (ex: hoster :./service.js) then the service is a added as a middleware with no path (i.e. app.use(service))
+
+
+## Settings
+
+Services inherit their parent's 'root' (cwd) and 'views' settings accessible via app.get(). They can also access their mount-point via app.get('base'). 
+
+If a service requires a particular setup when attached, it is possible to set the 'configurator' setting in the hosting context which is a function that takes the mount-point and the mounted app as argument:
+
+```js
+module.exports = function (app) {
+
+  /*
+    configure the app...
+  */
+  
+  app.set('configurator', function (mnt, newApp) {
+    if (mnt === '/blog') {
+      newApp.set('views', __dirname+ '/blog/views');
+      // Now the blog app can find it's own views...
+    }
+  });
+
+};
+```
+
 ## Features
 
 Features are like services but services that are meant to be loaded at a specific point in your "regular" services.
 
-So you load features juste like any other mounte-point service but with a + (plus) sign in front of their mount point like this:
+So you load features juste like any other mount-point service but with a + (plus) sign in front of their mount point like this:
 
 ```sh
 hoster +/login:login.js server.js
@@ -82,49 +136,6 @@ module.exports = function handler(app, options) {
 };
 ```
 
-
-## Hoster protocol
-
-Hoster creates one express app and attach services to it.
-
-Hoster requires that services export a single function taking an express app as first argument:
-
-```js
-module.exports = function myService1(app) {
-
-  /*
-    configure the app...
-  */
-
-};
-```
-
-When a service has no mount point in the hoster command line (no colon in front of its path), the current app is passed as argument. This kind of service can add routes, or do anything to the global express app automatically created by hoster. 
-
-When a service requires to be mounted at a specific mount-point, a new express app is created and passed as argument. This kind of service is decoupled from the hosting context. (i.e. app.use(mount-point, service)) 
-
-If the mount-point is empty (ex: hoster :./service.js) then the service is a added as a middleware with no path (i.e. app.use(service))
-
-Services inherit their parent's 'root' (cwd) and 'views' settings accessible via app.get(). They can also access their mount-point via app.get('base'). 
-
-If a service requires a particular setup when attached, it is possible to set the 'configurator' setting in the hosting context which is a function that takes the mount-point and the mounted app as argument:
-
-```js
-module.exports = function (app) {
-
-  /*
-    configure the app...
-  */
-  
-  app.set('configurator', function (mnt, newApp) {
-    if (mnt === '/blog') {
-      newApp.set('views', __dirname+ '/blog/views');
-      // Now the blog app can find it's own views...
-    }
-  });
-
-};
-```
 
 # License
 
