@@ -23,7 +23,7 @@ $ hoster  [[+]<mnt-point>:]<service.js> [[[+]<mnt-point>:]<service.js> ...]
 ```  
 
 * At least one service must be provided
-* each service must conform to the hoster protocol
+* each service must conform to the hoster protocol (see below)
     
 Example:
 
@@ -41,31 +41,53 @@ $ PORT=8080 hoster ./db-config.js :../stats/stats.js ./server.js /blog:../blog/b
 
 hoster defines no routes and doesn't attach any express/connect middleware.
 
+## Service
+
+A service is just a javascript file that exports a handler that conforms to the hoster protocol.
+
+Services are loaded in the command line order.
+
+Based on how you instruct hoster to load them (in the command line), different results can be obtained.
+
+
 ## Features
 
-Sometimes it's useful to load a *feature* inside a service. But have it attached when you decide to.
+Features are like services but services that are meant to be loaded at a specific point in your "regular" services.
 
-So you load features juste like any other service but with a + (plus) sign in front of their mount point like this:
+So you load features juste like any other mounte-point service but with a + (plus) sign in front of their mount point like this:
 
 ```sh
-+/login:login.js
+hoster +/login:login.js server.js
 ```
 
-This will require the login.js and save it as a feature named '/login'
+This will require the login.js and save it as a feature named '/login', the mount point here is _only_ used as the name of the feature.
 
-Later in any service you can include it with the following code:
+Later in any service you can include this feature with the following code:
 
 ```js
-app.features('/login');
+if (app.features) app.features('/login');
 ```
 
 This will call the login.js handler and pass it the app as argument just like with mounted services.
+
+You can pass parameters to the app.features() these parameters will be passed to the handler:
+```js
+app.features('/login', { verbose: true });
+```
+
+This should work if the handler is designed to have parameters like:
+```js
+module.exports = function handler(app, options) {
+  ...
+};
+```
 
 
 ## Hoster protocol
 
 Hoster creates one express app and attach services to it.
-Hoster requires that services export a single function taking an express app as argument:
+
+Hoster requires that services export a single function taking an express app as first argument:
 
 ```js
 module.exports = function myService1(app) {
@@ -77,9 +99,10 @@ module.exports = function myService1(app) {
 };
 ```
 
-When a service has no mount point in the hoster command line, the current app is passed as argument. This kind of service can add routes, or do anything to the global express app automatically created by hoster. 
+When a service has no mount point in the hoster command line (no colon in front of its path), the current app is passed as argument. This kind of service can add routes, or do anything to the global express app automatically created by hoster. 
 
 When a service requires to be mounted at a specific mount-point, a new express app is created and passed as argument. This kind of service is decoupled from the hosting context. (i.e. app.use(mount-point, service)) 
+
 If the mount-point is empty (ex: hoster :./service.js) then the service is a added as a middleware with no path (i.e. app.use(service))
 
 Services inherit their parent's 'root' (cwd) and 'views' settings accessible via app.get(). They can also access their mount-point via app.get('base'). 

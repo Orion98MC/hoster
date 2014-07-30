@@ -6,7 +6,7 @@ var
   path = require('path')
   fs = require('fs')
   configs = process.argv.slice(2)
-  usage = "Usage: hoster [[+]<mount-point>:]<server.js> [[[+]<mount-point>:]<server.js> ...]\n  Where <server.js> must conform to the hoster protocol"
+  usage = "Usage: hoster [[+]<mount-point>:]<service.js> [[[+]<mount-point>:]<service.js> ...]\n  Where <service.js> must conform to the hoster protocol"
   
 if (!configs.length) {
   console.log(usage);
@@ -63,13 +63,21 @@ function newApp() {
   app.set('configurator', function (mountPoint, app) { }); // Middeware configurator default: noop
   
   app.attach = attach;
-  app.features = function (name) {
+  app.features = function (name, settings) {
     if (_features[name]) {
-      console.log('* Applying feature', name);
-      _features[name](app);
+      console.log('* Applying feature', name, settings);
+      _features[name](app, settings);
     }
   }
   return app;
+}
+
+function load(filename) {
+  var firstLetter = filename.substr(0,1);
+  if (firstLetter === '.' || firstLetter === '/') {
+    return require(path.resolve(filename));
+  }
+  return require(filename);
 }
 
 // Load services
@@ -79,12 +87,12 @@ configs.forEach(function (config) {
   if (match) {
     if (match[1].substr(0,1) === '+') {
       console.log('* Loading feature', match[1].substr(1));
-      _features[match[1].substr(1)] = require(path.resolve(match[2]));
+      _features[match[1].substr(1)] = load(match[2]);
       return;
     }
-    services.push({ mount: match[1], handler: require(path.resolve(match[2])) });
+    services.push({ mount: match[1], handler: load(match[2]) });
   }
-  services.push({ handler: require(path.resolve(config)) });
+  services.push({ handler: load(config) });
 });
 
 // Create base app
