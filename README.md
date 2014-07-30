@@ -1,13 +1,21 @@
 # A hosting rack
 
-Hoster is an express services rack for node environment. It allows you to add/remove services to a server very easily and thus reuse your services throughout different projects.
+Hoster is an *ExpressJS* services rack for node environment. It allows you to add/remove services to a server very easily and thus reuse your services throughout different projects.
 
 ## Requirement
 
-Hoster requires express node packet to be installed as global (ex: npm i -g express)
+Hoster requires *ExpressJS* node package to be installed as global
+
+Example:
+
+```
+npm i -g express
+```
 
 
 ## Install
+
+Hoster should be installed as global:
 
 ```sh
 $ npm install -g express_hoster
