@@ -1,12 +1,26 @@
 {
   "name": "express_hoster",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "hoster is an express hosting rack",
   "main": "hoster",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "bin":{"hoster":"hoster"},
+  "bin": {
+    "hoster": "hoster"
+  },
   "author": "Thierry Passeron",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Orion98MC/hoster.git"
+  },
+  "keywords": [
+    "express",
+    "hoster"
+  ],
+  "bugs": {
+    "url": "https://github.com/Orion98MC/hoster/issues"
+  },
+  "homepage": "https://github.com/Orion98MC/hoster"
 }

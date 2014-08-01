@@ -91,6 +91,7 @@ configs.forEach(function (config) {
       return;
     }
     services.push({ mount: match[1], handler: load(match[2]) });
+    return;
   }
   services.push({ handler: load(config) });
 });
